@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+```
+<title>AI Medicine Information Chatbot</title>
+
+<!-- Main CSS -->
+<link rel="stylesheet" href="css/style.css">
+
+<!-- Font Awesome -->
+<link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+```
+
+</head>
+
+<body>
+
+```
+<!-- =========================
+     SIDEBAR
+========================== -->
+
+<aside class="sidebar">
+
+    <h2>
+        <i class="fa-solid fa-prescription-bottle-medical"></i>
+        Smart Pharmacy
+    </h2>
+
+    <ul>
+
+        <li>
+            <a href="dashboard.html">
+                <i class="fa-solid fa-chart-line"></i>
+                Dashboard
+            </a>
+        </li>
+
+        <li>
+            <a href="inventory.html">
+                <i class="fa-solid fa-pills"></i>
+                Medicine Inventory
+            </a>
+        </li>
+
+        <li>
+            <a href="stock.html">
+                <i class="fa-solid fa-boxes-stacked"></i>
+                Stock Management
+            </a>
+        </li>
+
+        <li>
+            <a href="expiry.html">
+                <i class="fa-solid fa-calendar-xmark"></i>
+                Expiry Management
+            </a>
+        </li>
+
+        <li>
+            <a href="chatbot.html" class="active">
+                <i class="fa-solid fa-robot"></i>
+                AI Chatbot
+            </a>
+        </li>
+
+        <li>
+            <a href="reports.html">
+                <i class="fa-solid fa-chart-pie"></i>
+                Reports
+            </a>
+        </li>
+
+        <li>
+            <a href="profile.html">
+                <i class="fa-solid fa-user"></i>
+                Profile
+            </a>
+        </li>
+
+    </ul>
+
+</aside>
+
+
+<!-- =========================
+     MAIN CONTENT
+========================== -->
+
+<main class="main">
+
+    <!-- Header -->
+
+    <div class="header">
+
+        <div>
+
+            <h1>
+                AI Medicine Information Chatbot
+            </h1>
+
+            <p>
+                Get information about medicines using name or image
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         CHATBOT SECTION
+    ========================== -->
+
+    <section class="chatbot-container">
+
+
+        <!-- Chatbot Header -->
+
+        <div class="chatbot-header">
+
+            <div>
+
+                <i class="fa-solid fa-robot " ></i>
+
+                <span>
+                    Smart Pharmacy Assistant
+                </span>
+
+            </div>
+
+            <span class="online">
+                ● Online
+            </span>
+
+        </div>
+
+
+        <!-- =========================
+             CHAT AREA
+        ========================== -->
+
+        <div class="chat-box" id="chatBox">
+
+            <!-- Initial Bot Message -->
+
+            <div class="bot-message">
+
+                <strong>
+                    AI Assistant:
+                </strong>
+
+                <p>
+                    Hello! 👋 Welcome to the Smart Pharmacy Assistant.
+                </p>
+
+                <p>
+                    Enter a medicine name to get medicine information,
+                    or type your question in English, Tamil, or Tanglish.
+                </p>
+
+                <p>
+                    You can also upload a photo of a medicine strip/box,
+                    or paste details from a lab report or patient history
+                    as text.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             MEDICINE SEARCH
+        ========================== -->
+
+        <div class="medicine-search">
+
+            <input
+                type="text"
+                id="medicineInput"
+                placeholder="Enter medicine name..."
+                autocomplete="off">
+
+            <button
+                type="button"
+                id="sendBtn">
+
+                <i class="fa-solid fa-paper-plane"></i>
+
+                Ask
+
+            </button>
+
+        </div>
+
+
+        <!-- =========================
+             IMAGE UPLOAD
+        ========================== -->
+
+        <div class="image-upload">
+
+            <label for="medicineImage">
+
+                <i class="fa-solid fa-camera"></i>
+
+                Upload Medicine / Report Photo
+
+            </label>
+
+            <input
+                type="file"
+                id="medicineImage"
+                accept="image/*">
+
+            <p id="imageName"></p>
+
+        </div>
+
+
+        <!-- =========================
+             INFORMATION NOTE
+        ========================== -->
+
+        <div class="ai-suggestion">
+
+            <h3>
+                <i class="fa-solid fa-circle-info"></i>
+                About AI Medicine Information
+            </h3>
+
+            <p>
+                This chatbot is designed to provide medicine
+                information such as medicine name, common uses,
+                price, availability, prescription information
+                and expiry details based on verified pharmacy data.
+            </p>
+
+            <p>
+                Medicine information will be connected with
+                doctor/pharmacist-verified data in the final system.
+            </p>
+
+            <p>
+                You can chat in English, Tamil, or Tanglish. This
+                chatbot gives general information only — always
+                confirm exact dosage and treatment with a doctor
+                or pharmacist.
+            </p>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- =========================
+     JAVASCRIPT
+========================== -->
+
+<script src="js/config.js"></script>
+<script src="js/chatbot.js"></script>
+```
+
+</body>
+
+</html>

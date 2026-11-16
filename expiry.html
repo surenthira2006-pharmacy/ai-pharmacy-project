@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Expiry Management | Smart Pharmacy</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<!-- Sidebar -->
+
+<div class="sidebar">
+
+    <h2><i class="fa-solid fa-capsules"></i> Smart Pharmacy</h2>
+
+    <ul>
+
+        <li><a href="dashboard.html"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+
+        <li><a href="inventory.html"><i class="fa-solid fa-pills"></i> Medicine Inventory</a></li>
+
+        <li><a href="stock.html"><i class="fa-solid fa-box"></i> Stock Management</a></li>
+
+        <li><a href="expiry.html" class="active"><i class="fa-solid fa-calendar-xmark"></i> Expiry Management</a></li>
+
+        <li><a href="chatbot.html"><i class="fa-solid fa-robot"></i> AI Chatbot</a></li>
+
+        <li><a href="reports.html"><i class="fa-solid fa-chart-column"></i> Reports</a></li>
+
+        <li><a href="profile.html"><i class="fa-solid fa-user"></i> Profile</a></li>
+
+        <li><a href="login.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+
+    </ul>
+
+</div>
+
+<!-- Main Content -->
+
+<div class="main">
+
+    <!-- Header -->
+
+    <div class="header">
+
+        <h1>Expiry Management</h1>
+
+        <div class="user">
+
+            <i class="fa-solid fa-user-circle"></i>
+
+            Admin
+
+        </div>
+
+    </div>
+
+    <!-- Summary Cards -->
+
+    <div class="cards">
+
+        <div class="card">
+
+            <i class="fa-solid fa-calendar-check"></i>
+
+            <h3>Total Medicines</h3>
+
+            <h2 id="totalMedicines">0</h2>
+
+        </div>
+
+        <div class="card">
+
+            <i class="fa-solid fa-clock"></i>
+
+            <h3>Near Expiry</h3>
+
+            <h2 id="nearExpiry">0</h2>
+
+        </div>
+
+        <div class="card">
+
+            <i class="fa-solid fa-circle-xmark"></i>
+
+            <h3>Expired</h3>
+
+            <h2 id="expiredMedicines">0</h2>
+
+        </div>
+
+        <div class="card">
+
+            <i class="fa-solid fa-bell"></i>
+
+            <h3>Alerts Sent</h3>
+
+            <h2 id="alertsSent">0</h2>
+
+        </div>
+
+    </div>
+
+    <!-- Search -->
+
+    <div class="section">
+
+        <h2>Search Medicine</h2>
+
+        <input type="text" placeholder="Enter Medicine Name">
+
+        <button>
+            <i class="fa-solid fa-magnifying-glass"></i>
+            Search
+        </button>
+
+    </div>
+
+    <!-- Near Expiry Table -->
+
+    <div class="section">
+
+        <h2>Medicines Near Expiry</h2>
+
+        <table>
+
+            <tr>
+
+                <th>Medicine</th>
+                <th>Batch No</th>
+                <th>Expiry Date</th>
+                <th>Days Left</th>
+                <th>Status</th>
+
+            </tr>
+
+            <tr>
+
+                <td>Paracetamol</td>
+                <td>PAR101</td>
+                <td>20-08-2026</td>
+                <td>25</td>
+                <td style="color:orange;">Warning</td>
+
+            </tr>
+
+            <tr>
+
+                <td>Dolo 650</td>
+                <td>DOL202</td>
+                <td>15-09-2026</td>
+                <td>50</td>
+                <td style="color:green;">Safe</td>
+
+            </tr>
+
+            <tr>
+
+                <td>Crocin</td>
+                <td>CRO303</td>
+                <td>28-07-2026</td>
+                <td>2</td>
+                <td style="color:red;">Urgent</td>
+
+            </tr>
+
+        </table>
+
+    </div>
+
+    <!-- Expired Medicines -->
+
+    <div class="section">
+
+        <h2>Expired Medicines</h2>
+
+        <table>
+
+            <tr>
+
+                <th>Medicine</th>
+                <th>Batch No</th>
+                <th>Expiry Date</th>
+                <th>Status</th>
+
+            </tr>
+
+            <tr>
+
+                <td>Vitamin C</td>
+                <td>VIT404</td>
+                <td>01-07-2026</td>
+                <td style="color:red;">Expired</td>
+
+            </tr>
+
+            <tr>
+
+                <td>Antibiotic</td>
+                <td>ANT505</td>
+                <td>10-06-2026</td>
+                <td style="color:red;">Expired</td>
+
+            </tr>
+
+        </table>
+
+    </div>
+
+    <!-- AI Expiry Alert -->
+
+    <div class="section">
+
+        <h2>AI Expiry Alert</h2>
+
+        <p>
+
+            AI has identified
+            <strong>Paracetamol</strong>
+            and
+            <strong>Crocin</strong>
+            as medicines that require immediate attention due to their upcoming expiry dates.
+
+        </p>
+
+        <button>
+
+            <i class="fa-solid fa-bell"></i>
+
+            Send Notification
+
+        </button>
+
+    </div>
+
+</div>
+
+<!-- JavaScript -->
+
+<script src="js/auth.js"></script>
+<script src="js/store.js"></script>
+<script src="js/expiry.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login </title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- Left Panel -->
+
+    <div class="left-panel">
+
+        <div class="logo">
+
+            <i class="fa-solid fa-capsules"></i>
+
+            <h1>Smart Pharmacy</h1>
+
+        </div>
+
+        <h2>Smart Pharmacy Inventory & Expiry Management System</h2>
+
+        <p>
+
+            Smart inventory management with AI-powered medicine
+            information, stock prediction, and expiry monitoring.
+
+        </p>
+
+        <img src="images/pharmacy.png" alt="Pharmacy">
+
+    </div>
+
+    <!-- Right Panel -->
+
+    <div class="right-panel">
+
+        <div class="login-box">
+
+            <h2>Welcome Back 👋</h2>
+
+            <p>Please login to continue</p>
+
+
+            <p id="loginError" class="form-msg"></p>
+
+            <form id="loginForm" autocomplete="off">
+
+                <div class="input-box">
+
+                    <i class="fa-solid fa-user"></i>
+
+                    <input
+                    type="text"
+                    id="username"
+                    placeholder="Username"
+                    autocomplete="off"
+                    required>
+
+                </div>
+
+                <div class="input-box">
+
+                    <i class="fa-solid fa-lock"></i>
+
+                    <input
+                    type="password"
+                    id="password"
+                    placeholder="Password"
+                    autocomplete="new-password"
+                    required>
+
+                    <span id="togglePassword">
+
+                        <i class="fa-solid fa-eye"></i>
+
+                    </span>
+
+                </div>
+
+                <div class="remember">
+
+                    <label>
+
+                        <input type="checkbox">
+
+                        Remember Me
+
+                    </label>
+
+                    <a href="#">Forgot Password?</a>
+
+                </div>
+
+                <button type="submit">
+
+                    Login
+
+                </button>
+
+            </form>
+
+            <div class="or">
+
+                OR
+
+            </div>
+
+            <button class="google-btn">
+
+                <i class="fa-brands fa-google"></i>
+
+                Continue with Google
+
+            </button>
+
+            <div class="footer">
+
+                <p>
+
+                    Don't have an account?
+
+                    <a href="#">Register</a>
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- JavaScript -->
+<script src="js/login.js"></script>
+
+</body>
+</html>
