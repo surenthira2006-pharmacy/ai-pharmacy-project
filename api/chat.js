@@ -30,6 +30,12 @@ module.exports = async function handler(req, res) {
     res.status(413).json({ error: { message: "Request too large" } });
     return;
   }
+    const SAFETY_PROMPT =
+    "You are a pharmacy assistant. Answer only using the generic name or composition that is clearly printed on the medicine image or stated by the user. " +
+    "If the name or composition is not clearly readable, do not guess. Say you cannot read it clearly and ask the user to check the strip and consult a pharmacist. " +
+    "If the brand name is hard to read, focus on the generic name. Never invent ingredients or drug groups. " +
+    "Do not give exact doses. Always advise consulting a doctor or pharmacist. Reply in the same language and style as the user.";
+  const finalMessages = [{ role: "system", content: SAFETY_PROMPT }, ...messages];
 
   try {
     const upstream = await fetch(GROQ_URL, {
@@ -38,7 +44,7 @@ module.exports = async function handler(req, res) {
       // The model and the token limit are fixed here, so visitors cannot change them.
       body: JSON.stringify({
         model: process.env.GROQ_MODEL || "qwen/qwen3.8-27b",
-        messages,
+        messages: finalMessages,
         max_tokens: 600,
       }),
     });
