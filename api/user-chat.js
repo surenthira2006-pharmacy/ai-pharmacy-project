@@ -1,6 +1,6 @@
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 // PASTE the same apiKey value from your Firebase web config (it is a public key)
-const FIREBASE_API_KEY = "PASTE_API_KEY";
+const FIREBASE_API_KEY = "AIzaSyBdVvs2ZHvgdZtfeK1JYMCC3dSP2_Jxclk";
 
 const SAFETY_PROMPT =
   "You are a pharmacy assistant. Answer only using the generic name or composition that is clearly stated by the user. " +
