@@ -54,9 +54,12 @@ body.side aside{transform:none}header{display:block}
     <header><button class="ghost" id="menu">Chats</button></header>
     <div id="msgs"></div>
     <form id="f">
+      <input type="file" id="pic" accept="image/*" hidden>
+      <button type="button" class="ghost" id="att">Photo</button>
       <textarea id="in" rows="1" placeholder="Type a medicine name or question" maxlength="2000"></textarea>
       <button class="pri" id="go">Send</button>
     </form>
+    <div class="note" id="prev" hidden></div>
     <div class="note">General information only. Always check with your doctor or pharmacist.</div>
   </main>
 </div>
@@ -76,7 +79,7 @@ const FIREBASE_CONFIG = {
 firebase.initializeApp(FIREBASE_CONFIG);
 const auth = firebase.auth(), db = firebase.firestore();
 const $ = id => document.getElementById(id);
-let user = null, chatId = null, msgs = [], busy = false;
+let img = null, user = null, chatId = null, msgs = [], busy = false;
 
 const col = () => db.collection("users").doc(user.uid).collection("chats");
 
@@ -120,18 +123,22 @@ function render() {
 }
 
 async function send() {
-  const t = $("in").value.trim();
+  const t = $("in").value.trim() || (img ? "Tell me about this medicine" : "");
   if (!t || busy) return;
   busy = true; $("go").disabled = true; $("in").value = "";
   if (!msgs.length) $("msgs").innerHTML = "";
-  msgs.push({ role: "user", content: t }); bubble("user", t);
+  const shown = img ? t + " [photo attached]" : t;
+  msgs.push({ role: "user", content: shown }); bubble("user", shown);
+  const out = msgs.slice(-20).map(m => ({ role: m.role, content: m.content }));
+  if (img) out[out.length - 1].content = [{ type: "text", text: t }, { type: "image_url", image_url: { url: img } }];
+  img = null; $("prev").hidden = true;
   const wait = bubble("assistant", "Thinking...");
   try {
     const token = await user.getIdToken();
     const r = await fetch("/api/user-chat", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
-      body: JSON.stringify({ messages: msgs.slice(-20) })
+      body: JSON.stringify({ messages: out })
     });
     const data = await r.json();
     if (!r.ok) throw new Error((data.error && data.error.message) || "Request failed");
@@ -147,6 +154,27 @@ async function send() {
   busy = false; $("go").disabled = false; $("in").focus();
 }
 
+$("att").onclick = () => $("pic").click();
+$("pic").onchange = async e => {
+  const f = e.target.files[0]; e.target.value = "";
+  if (!f) return;
+  try { img = await shrink(f); $("prev").hidden = false; $("prev").textContent = "Photo attached. Add a question if you like, then press Send."; }
+  catch (x) { alert("Please choose a photo file."); }
+};
+function shrink(file) {
+  return new Promise((ok, no) => {
+    const im = new Image();
+    im.onload = () => {
+      const s = Math.min(1, 1024 / Math.max(im.width, im.height));
+      const c = document.createElement("canvas");
+      c.width = Math.round(im.width * s); c.height = Math.round(im.height * s);
+      c.getContext("2d").drawImage(im, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(im.src); ok(c.toDataURL("image/jpeg", 0.8));
+    };
+    im.onerror = () => no(new Error("bad image"));
+    im.src = URL.createObjectURL(file);
+  });
+}
 $("f").onsubmit = e => { e.preventDefault(); send(); };
 $("in").onkeydown = e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } };
 </script>
