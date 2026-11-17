@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Smart Pharmacy AI Chat</title>
+<style>
+:root{--bg:#f3f8f6;--card:#fff;--ink:#14302b;--mut:#5d7873;--pri:#0f766e;--line:#d5e6e1;--bot:#e6f2ee}
+@media(prefers-color-scheme:dark){:root{--bg:#0c1615;--card:#13221f;--ink:#e5f1ee;--mut:#8caea8;--pri:#2dd4bf;--line:#233e38;--bot:#1a2f2b}}
+*{box-sizing:border-box}html,body{height:100%;margin:0}
+body{font-family:system-ui,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--ink)}
+[hidden]{display:none!important}
+button{font:inherit;cursor:pointer}
+button:focus-visible,textarea:focus-visible{outline:2px solid var(--pri);outline-offset:2px}
+#login{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center}
+#login h1{margin:0;font-size:1.6rem}#login p{margin:0;color:var(--mut);max-width:34ch}
+.pri{background:var(--pri);color:#fff;border:0;border-radius:8px;padding:11px 20px;font-weight:600}
+#app{height:100%;display:flex}
+aside{width:270px;background:var(--card);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:12px;gap:8px}
+#list{flex:1;overflow:auto;display:flex;flex-direction:column;gap:4px}
+#list button{text-align:left;background:none;border:0;color:var(--ink);padding:9px 10px;border-radius:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#list button:hover,#list button.on{background:var(--bot)}
+.ghost{background:none;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:9px}
+#who{font-size:.85rem;color:var(--mut);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+main{flex:1;display:flex;flex-direction:column;min-width:0}
+header{display:none;padding:10px;border-bottom:1px solid var(--line);background:var(--card)}
+#msgs{flex:1;overflow:auto;padding:20px;display:flex;flex-direction:column;gap:10px}
+.m{max-width:min(720px,88%);padding:10px 14px;border-radius:12px;white-space:pre-wrap;line-height:1.55}
+.m.user{align-self:flex-end;background:var(--pri);color:#fff}
+.m.assistant{align-self:flex-start;background:var(--bot)}
+.hint{margin:auto;color:var(--mut);text-align:center;max-width:36ch}
+form{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line);background:var(--card)}
+textarea{flex:1;resize:none;border:1px solid var(--line);border-radius:8px;padding:10px;font:inherit;background:var(--bg);color:var(--ink);max-height:140px}
+.note{font-size:.75rem;color:var(--mut);text-align:center;padding:0 12px 8px;background:var(--card)}
+@media(max-width:760px){
+aside{position:fixed;inset:0 auto 0 0;z-index:5;transform:translateX(-100%);transition:transform .2s}
+body.side aside{transform:none}header{display:block}
+}
+@media(prefers-reduced-motion:reduce){aside{transition:none}}
+</style></head><body>
+
+<section id="login">
+  <h1>Smart Pharmacy AI Chat</h1>
+  <p>Ask about medicines in English, Tamil or Tanglish. Sign in to keep your chats saved.</p>
+  <button class="pri" id="gbtn">Sign in with Google</button>
+</section>
+
+<div id="app" hidden>
+  <aside>
+    <button class="pri" id="new">New chat</button>
+    <div id="list"></div>
+    <div id="who"></div>
+    <button class="ghost" id="out">Sign out</button>
+  </aside>
+  <main>
+    <header><button class="ghost" id="menu">Chats</button></header>
+    <div id="msgs"></div>
+    <form id="f">
+      <textarea id="in" rows="1" placeholder="Type a medicine name or question" maxlength="2000"></textarea>
+      <button class="pri" id="go">Send</button>
+    </form>
+    <div class="note">General information only. Always check with your doctor or pharmacist.</div>
+  </main>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+// PASTE your Firebase web config here (Firebase console > Project settings > Your apps)
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyBdVvs2ZHvgdZtfeK1JYMCC3dSP2_Jxclk",
+  authDomain: "ai-pharmacy-17eaa.firebaseapp.com",
+  projectId: "ai-pharmacy-17eaa",
+  appId: "1:693519260907:web:14926d6cedfb1b769fb2ae"
+};
+
+firebase.initializeApp(FIREBASE_CONFIG);
+const auth = firebase.auth(), db = firebase.firestore();
+const $ = id => document.getElementById(id);
+let user = null, chatId = null, msgs = [], busy = false;
+
+const col = () => db.collection("users").doc(user.uid).collection("chats");
+
+$("gbtn").onclick = () => auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e => alert(e.message));
+$("out").onclick = () => auth.signOut();
+$("new").onclick = () => { newChat(); document.body.classList.remove("side"); };
+$("menu").onclick = () => document.body.classList.toggle("side");
+
+auth.onAuthStateChanged(u => {
+  user = u;
+  $("login").hidden = !!u;
+  $("app").hidden = !u;
+  if (u) { $("who").textContent = u.displayName || u.email; newChat(); loadList(); }
+});
+
+function newChat() { chatId = null; msgs = []; render(); }
+
+async function loadList() {
+  const s = await col().orderBy("updatedAt", "desc").limit(50).get();
+  const l = $("list"); l.innerHTML = "";
+  s.forEach(d => {
+    const b = document.createElement("button");
+    b.textContent = d.data().title || "Chat";
+    if (d.id === chatId) b.className = "on";
+    b.onclick = () => { chatId = d.id; msgs = d.data().messages || []; render(); document.body.classList.remove("side"); loadList(); };
+    l.appendChild(b);
+  });
+}
+
+function bubble(role, text) {
+  const d = document.createElement("div");
+  d.className = "m " + role; d.textContent = text;
+  $("msgs").appendChild(d); $("msgs").scrollTop = 1e9;
+  return d;
+}
+
+function render() {
+  const m = $("msgs"); m.innerHTML = "";
+  if (!msgs.length) m.innerHTML = '<p class="hint">Type a medicine name, for example Paracetamol, or describe a symptom.</p>';
+  msgs.forEach(x => bubble(x.role, x.content));
+}
+
+async function send() {
+  const t = $("in").value.trim();
+  if (!t || busy) return;
+  busy = true; $("go").disabled = true; $("in").value = "";
+  if (!msgs.length) $("msgs").innerHTML = "";
+  msgs.push({ role: "user", content: t }); bubble("user", t);
+  const wait = bubble("assistant", "Thinking...");
+  try {
+    const token = await user.getIdToken();
+    const r = await fetch("/api/user-chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
+      body: JSON.stringify({ messages: msgs.slice(-20) })
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error((data.error && data.error.message) || "Request failed");
+    const reply = (data.choices[0].message.content || "").replace(/<think>[\s\S]*?<\/think>/g, "").trim();
+    msgs.push({ role: "assistant", content: reply }); wait.textContent = reply;
+    if (!chatId) chatId = col().doc().id;
+    await col().doc(chatId).set({ title: msgs[0].content.slice(0, 40), messages: msgs, updatedAt: Date.now() });
+    loadList();
+  } catch (e) {
+    msgs.pop();
+    wait.textContent = "Could not get an answer: " + e.message + ". Please try again in a minute.";
+  }
+  busy = false; $("go").disabled = false; $("in").focus();
+}
+
+$("f").onsubmit = e => { e.preventDefault(); send(); };
+$("in").onkeydown = e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } };
+</script>
+</body></html>
